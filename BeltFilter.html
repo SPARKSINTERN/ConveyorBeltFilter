@@ -253,11 +253,13 @@
         </section>
         
         <section id="pagination">
-            <button id="prev">Previous</button>
-            <span id="page-info"></span>
-            <button id="next">Next</button>
+            <button id="first" class="btn btn--alt"><<</button>
+    	    <button id="prev" class="btn btn--alt"><</button>
+    	    <span id="page-info"></span>
+    	    <button id="next" class="btn btn--alt">></button>
+    	    <button id="last" class="btn btn--alt">>></button>
         </section>
-    
+
     <script src="script.js"></script>
     <style>
         body {
@@ -397,23 +399,33 @@
         }
 
         #pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-        }
+    	    display: flex;
+    	    justify-content: center;
+    	    align-items: center;
+    	    margin-top: 20px;
+	}
 
-        #pagination button {
-            margin: 0 10px;
-            padding: 5px 10px;
-            border: 1px solid #ddd;
-            background-color: #f2f2f2;
-            cursor: pointer;
-        }
+	#pagination button {
+    	    margin: 0 5px;
+    	    padding: 5px 10px;
+    	    border: 1px solid #002554; /* Add a border */
+    	    background-color: #f0f0f0; /* Light background color */
+    	    color: #002554; /* Button text color */
+    	    cursor: pointer;
+    	    font-size: 16px;
+    	    border-radius: 3px; /* Slightly rounded corners */
+    	    transition: background-color 0.3s, color 0.3s; /* Smooth transition for background and text color */
+	}
 
-        #pagination span {
-            font-weight: bold;
-        }
+	#pagination button:hover {
+    	    background-color: #002554; /* Change background color on hover */
+    	    color: #ffffff; /* Change text color on hover */
+	}
+
+	#pagination span {
+    	    color: #000000;
+    	    font-weight: bold;
+	}
 
         .btn {
             display: inline-block;
@@ -448,7 +460,7 @@
         .btn-secondary:hover {
             background-color: #001a33;
         }
-
+	
 
             </style>
     <script>
@@ -5130,146 +5142,158 @@
      ];
 
      const beltList = document.getElementById('belt-list');
-        const paginationInfo = document.getElementById('page-info');
-        const prevButton = document.getElementById('prev');
-        const nextButton = document.getElementById('next');
+    const paginationInfo = document.getElementById('page-info');
+    const prevButton = document.getElementById('prev');
+    const nextButton = document.getElementById('next');
+    const firstButton = document.getElementById('first');
+    const lastButton = document.getElementById('last');
 
-        function renderBeltList(belts) {
-            beltList.innerHTML = '';
-            belts.forEach(belt => {
-                const tr = document.createElement('tr');
-                tr.setAttribute('data-category', belt.category);
-                tr.setAttribute('data-application', belt.application.join(' '));
-                tr.setAttribute('data-name', belt.name);
-                tr.setAttribute('data-dia', belt.dia);
-                tr.setAttribute('data-width', belt.width);
-                tr.setAttribute('data-temp', belt.temp);
-                tr.setAttribute('data-mintemp', belt.mintemp);
-                tr.innerHTML = `
-                    <td><img src="${belt.image}" alt="${belt.name}"></td>
-                    <td><strong>${belt.name}</strong><br>${belt.description}</td>
-                    <td>${belt.partNumber}</td>
-                    <td><a href="${belt.pdf}" target="_blank" class="btn btn--alt btn--download">Download</a></td>
-                `;
-                beltList.appendChild(tr);
-            });
-        }
+    function renderBeltList(belts) {
+        beltList.innerHTML = '';
+        belts.forEach(belt => {
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-category', belt.category);
+            tr.setAttribute('data-application', belt.application.join(' '));
+            tr.setAttribute('data-name', belt.name);
+            tr.setAttribute('data-dia', belt.dia);
+            tr.setAttribute('data-width', belt.width);
+            tr.setAttribute('data-temp', belt.temp);
+            tr.setAttribute('data-mintemp', belt.mintemp);
+            tr.innerHTML = `
+                <td><img src="${belt.image}" alt="${belt.name}"></td>
+                <td><strong>${belt.name}</strong><br>${belt.description}</td>
+                <td>${belt.partNumber}</td>
+                <td><a href="${belt.pdf}" target="_blank" class="btn btn--alt btn--download">Download</a></td>
+            `;
+            beltList.appendChild(tr);
+        });
+    }
 
-        function paginate(belts, page) {
-            const start = (page - 1) * beltsPerPage;
-            const end = start + beltsPerPage;
-            return belts.slice(start, end);
-        }
+    function paginate(belts, page) {
+        const start = (page - 1) * beltsPerPage;
+        const end = start + beltsPerPage;
+        return belts.slice(start, end);
+    }
 
-        function updatePaginationInfo() {
-            const totalPages = Math.ceil(filteredBelts.length / beltsPerPage);
-            paginationInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-            prevButton.disabled = currentPage === 1;
-            nextButton.disabled = currentPage === totalPages;
-        }
+    function updatePaginationInfo() {
+        const totalPages = Math.ceil(filteredBelts.length / beltsPerPage);
+        paginationInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        prevButton.disabled = currentPage === 1;
+        nextButton.disabled = currentPage === totalPages;
+        firstButton.disabled = currentPage === 1;
+        lastButton.disabled = currentPage === totalPages;
+    }
 
-        function filterItems() {
-            const textFilterValues = {
-                name: document.getElementById('filter-name').value.toLowerCase(),
-                dia: parseFloat(document.getElementById('filter-dia').value),
-                width: parseFloat(document.getElementById('filter-width').value),
-                temp: parseFloat(document.getElementById('filter-temp').value),
-                mintemp: parseFloat(document.getElementById('filter-mintemp').value)
-            };
+    function filterItems() {
+        const textFilterValues = {
+            name: document.getElementById('filter-name').value.toLowerCase(),
+            dia: parseFloat(document.getElementById('filter-dia').value),
+            width: parseFloat(document.getElementById('filter-width').value),
+            temp: parseFloat(document.getElementById('filter-temp').value),
+            mintemp: parseFloat(document.getElementById('filter-mintemp').value)
+        };
 
-            const dropdownFilterValues = {
-                compound: document.getElementById('compound').value.toLowerCase(),
-                fabric: document.getElementById('fabric').value.toLowerCase(),
-                color: document.getElementById('color').value.toLowerCase(),
-                cover: document.getElementById('cover').value.toLowerCase(),
-                bottom: document.getElementById('bottom').value.toLowerCase(),
-                friction: document.getElementById('friction').value.toLowerCase(),
-            };
+        const dropdownFilterValues = {
+            compound: document.getElementById('compound').value.toLowerCase(),
+            fabric: document.getElementById('fabric').value.toLowerCase(),
+            color: document.getElementById('color').value.toLowerCase(),
+            cover: document.getElementById('cover').value.toLowerCase(),
+            bottom: document.getElementById('bottom').value.toLowerCase(),
+            friction: document.getElementById('friction').value.toLowerCase(),
+        };
 
-            const checkedCategories = Array.from(document.querySelectorAll('.checkboxes input[type="checkbox"]:checked'))
-                .map(checkbox => checkbox.value.toLowerCase());
+        const checkedCategories = Array.from(document.querySelectorAll('.checkboxes input[type="checkbox"]:checked'))
+            .map(checkbox => checkbox.value.toLowerCase());
 
-            filteredBelts = beltData.filter(belt => {
-                const categoryMatch = checkedCategories.every(category => belt.category.toLowerCase().includes(category) || belt.application.map(a => a.toLowerCase()).includes(category));
-                const nameMatch = !textFilterValues.name || belt.name.toLowerCase().includes(textFilterValues.name);
-                const diaMatch = isNaN(textFilterValues.dia) || belt.dia <= textFilterValues.dia;
-                const widthMatch = isNaN(textFilterValues.width) || belt.width >= textFilterValues.width;
-                const tempMatch = isNaN(textFilterValues.temp) || belt.temp >= textFilterValues.temp;
-                const mintempMatch = isNaN(textFilterValues.mintemp) || belt.mintemp <= textFilterValues.mintemp;
-                
-                const compoundMatch = !dropdownFilterValues.compound || (Array.isArray(belt.compound) && belt.compound.some(comp => comp.toLowerCase() === dropdownFilterValues.compound));
-                const fabricMatch = !dropdownFilterValues.fabric || (Array.isArray(belt.fabric) && belt.fabric.some(fab => fab.toLowerCase() === dropdownFilterValues.fabric));
-                const colorMatch = !dropdownFilterValues.color || (Array.isArray(belt.color) && belt.color.some(col => col.toLowerCase() === dropdownFilterValues.color));
-                const coverMatch = !dropdownFilterValues.cover || (Array.isArray(belt.cover) && belt.cover.some(cov => cov.toLowerCase() === dropdownFilterValues.cover));
-                const bottomMatch = !dropdownFilterValues.bottom || (Array.isArray(belt.bottom) && belt.bottom.some(bot => bot.toLowerCase() === dropdownFilterValues.bottom));
-                const frictionMatch = !dropdownFilterValues.friction || (belt.friction && belt.friction.toLowerCase() === dropdownFilterValues.friction);
+        filteredBelts = beltData.filter(belt => {
+            const categoryMatch = checkedCategories.every(category => belt.category.toLowerCase().includes(category) || belt.application.map(a => a.toLowerCase()).includes(category));
+            const nameMatch = !textFilterValues.name || belt.name.toLowerCase().includes(textFilterValues.name);
+            const diaMatch = isNaN(textFilterValues.dia) || belt.dia <= textFilterValues.dia;
+            const widthMatch = isNaN(textFilterValues.width) || belt.width >= textFilterValues.width;
+            const tempMatch = isNaN(textFilterValues.temp) || belt.temp >= textFilterValues.temp;
+            const mintempMatch = isNaN(textFilterValues.mintemp) || belt.mintemp <= textFilterValues.mintemp;
+            
+            const compoundMatch = !dropdownFilterValues.compound || (Array.isArray(belt.compound) && belt.compound.some(comp => comp.toLowerCase() === dropdownFilterValues.compound));
+            const fabricMatch = !dropdownFilterValues.fabric || (Array.isArray(belt.fabric) && belt.fabric.some(fab => fab.toLowerCase() === dropdownFilterValues.fabric));
+            const colorMatch = !dropdownFilterValues.color || (Array.isArray(belt.color) && belt.color.some(col => col.toLowerCase() === dropdownFilterValues.color));
+            const coverMatch = !dropdownFilterValues.cover || (Array.isArray(belt.cover) && belt.cover.some(cov => cov.toLowerCase() === dropdownFilterValues.cover));
+            const bottomMatch = !dropdownFilterValues.bottom || (Array.isArray(belt.bottom) && belt.bottom.some(bot => bot.toLowerCase() === dropdownFilterValues.bottom));
+            const frictionMatch = !dropdownFilterValues.friction || (belt.friction && belt.friction.toLowerCase() === dropdownFilterValues.friction);
 
-                return categoryMatch && nameMatch && diaMatch && widthMatch && tempMatch && mintempMatch && compoundMatch && fabricMatch && colorMatch && coverMatch && bottomMatch && frictionMatch;
-            });
+            return categoryMatch && nameMatch && diaMatch && widthMatch && tempMatch && mintempMatch && compoundMatch && fabricMatch && colorMatch && coverMatch && bottomMatch && frictionMatch;
+        });
 
-            currentPage = 1;
+        currentPage = 1;
+        renderBeltList(paginate(filteredBelts, currentPage));
+        updatePaginationInfo();
+    }
+
+    document.querySelectorAll('.text-filters input').forEach(input => {
+        input.addEventListener('input', filterItems);
+    });
+
+    document.querySelectorAll('.checkboxes input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', filterItems);
+    });
+
+    document.querySelectorAll('.dropdown-selections input[list]').forEach(input => {
+        input.addEventListener('input', filterItems);
+    });
+
+    prevButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
             renderBeltList(paginate(filteredBelts, currentPage));
             updatePaginationInfo();
         }
+    });
 
-        document.querySelectorAll('.text-filters input').forEach(input => {
-            input.addEventListener('input', filterItems);
-        });
+    nextButton.addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredBelts.length / beltsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderBeltList(paginate(filteredBelts, currentPage));
+            updatePaginationInfo();
+        }
+    });
 
-        document.querySelectorAll('.checkboxes input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', filterItems);
-        });
-
-        document.querySelectorAll('.dropdown-selections input[list]').forEach(input => {
-            input.addEventListener('input', filterItems);
-        });
-
-        prevButton.addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderBeltList(paginate(filteredBelts, currentPage));
-                updatePaginationInfo();
-            }
-        });
-
-        nextButton.addEventListener('click', () => {
-            const totalPages = Math.ceil(filteredBelts.length / beltsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderBeltList(paginate(filteredBelts, currentPage));
-                updatePaginationInfo();
-            }
-        });
-
-        // Add event listener for the clear filters button
-        document.getElementById('clear-filters').addEventListener('click', () => {
-            
-            document.getElementById('filter-name').value = '';
-            document.getElementById('filter-dia').value = '';
-            document.getElementById('filter-width').value = '';
-            document.getElementById('filter-temp').value = '';
-            document.getElementById('filter-mintemp').value = '';
-
-            
-            document.getElementById('compound').value = '';
-            document.getElementById('fabric').value = '';
-            document.getElementById('color').value = '';
-            document.getElementById('cover').value = '';
-            document.getElementById('bottom').value = '';
-            document.getElementById('friction').value = '';
-
-            
-            document.querySelectorAll('.checkboxes input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-
-            
-            filterItems();
-        });
-
-        filteredBelts = beltData;
+    firstButton.addEventListener('click', () => {
+        currentPage = 1;
         renderBeltList(paginate(filteredBelts, currentPage));
         updatePaginationInfo();
+    });
+
+    lastButton.addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredBelts.length / beltsPerPage);
+        currentPage = totalPages;
+        renderBeltList(paginate(filteredBelts, currentPage));
+        updatePaginationInfo();
+    });
+
+    // Add event listener for the clear filters button
+    document.getElementById('clear-filters').addEventListener('click', () => {
+        document.getElementById('filter-name').value = '';
+        document.getElementById('filter-dia').value = '';
+        document.getElementById('filter-width').value = '';
+        document.getElementById('filter-temp').value = '';
+        document.getElementById('filter-mintemp').value = '';
+
+        document.getElementById('compound').value = '';
+        document.getElementById('fabric').value = '';
+        document.getElementById('color').value = '';
+        document.getElementById('cover').value = '';
+        document.getElementById('bottom').value = '';
+        document.getElementById('friction').value = '';
+
+        document.querySelectorAll('.checkboxes input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+
+        filterItems();
+    });
+
+    // Initial render
+    filterItems();
 });
     </script>
 </body>
