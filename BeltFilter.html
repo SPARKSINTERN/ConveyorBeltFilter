@@ -259,6 +259,22 @@
     	    <button id="next" class="btn btn--alt">></button>
     	    <button id="last" class="btn btn--alt">>></button>
         </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <a href="https://www.sparksbelting.com">
+                <img src="https://www.sparksbelting.com/assets/img/svg/logo-inverted.svg" alt="Sparks Belting Logo" class="logo">
+            </a>
+            <div class="footer-links">
+                <a href="https://www.sparksbelting.com/products">Products</a>
+                <a href="https://www.sparksbelting.com/about">About Us</a>
+                <a href="https://www.sparksbelting.com/contact">Contact</a>
+                <a href="https://www.sparksbelting.com/policy">Privacy Policy</a>
+            </div>
+            <p>&copy; 2024 Sparks Belting Company. All Rights Reserved.</p>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
     <style>
@@ -459,6 +475,46 @@
 
         .btn-secondary:hover {
             background-color: #001a33;
+        }
+
+        footer {
+            background-color: #002554;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-content .logo {
+            max-width: 200px;
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1rem;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        footer p {
+            margin: 10px 0 0;
         }
 	
 
